@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Проверка связи · WebRTC</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+<main class="wrap">
+  <section class="upload card" aria-labelledby="upload-title">
+    <div class="card-head">
+      <div><h1 id="upload-title">Проверка качества связи</h1><p>Загрузите лог <code>RTCPeerConnection.getStats()</code></p></div>
+      <span class="file-limit">до {{ max_upload_mb }} МБ</span>
+    </div>
+    <form id="upload-form">
+      <label class="dropzone" id="dropzone" for="log">
+        <strong>Выберите или перетащите лог</strong>
+        <span>JSON, JSONL, LOG или TXT · файл не сохраняется</span>
+        <input id="log" name="log" type="file" accept=".json,.jsonl,.log,.txt" required>
+      </label>
+      <div class="form-row">
+        <label>ID звонка <input name="call_id" placeholder="Необязательно"></label>
+        <button type="submit">Проверить связь</button>
+      </div>
+    </form>
+    <p id="message" role="alert" aria-live="polite"></p>
+  </section>
+
+  <section id="results" hidden aria-live="polite">
+    <header class="top">
+      <div>
+        <h1 id="result-title">Результат проверки</h1>
+        <p id="result-meta">—</p>
+      </div>
+      <span id="quality" class="badge">—</span>
+    </header>
+
+    <div id="recommendation" class="rec"></div>
+
+    <section class="card" id="audio-card">
+      <div class="card-head"><h2>Аудио</h2><span class="src">RTP-потоки · источник getStats()</span></div>
+      <table>
+        <thead><tr><th>Метрика</th><th>Вверх</th><th>Вниз</th></tr></thead>
+        <tbody id="audio-metrics"></tbody>
+      </table>
+    </section>
+
+    <section class="card" id="video-card">
+      <div class="card-head"><h2>Видео</h2><span class="src">RTP-потоки · источник getStats()</span></div>
+      <table>
+        <thead><tr><th>Метрика</th><th>Вверх</th><th>Вниз</th></tr></thead>
+        <tbody id="video-metrics"></tbody>
+      </table>
+      <div class="chart">
+        <svg id="traffic-chart" viewBox="0 0 600 76" role="img" aria-label="Динамика битрейта видео">
+          <line x1="0" y1="60" x2="600" y2="60" class="chart-axis"/>
+          <polyline id="traffic-line" points="" class="chart-line"/>
+        </svg>
+        <p>Битрейт видео за время звонка. Красным отмечены замеры с потерями пакетов от 2%.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Диагностика звонка</h2><span id="sample-count" class="src"></span></div>
+      <table class="events"><tbody id="diagnostics"></tbody></table>
+    </section>
+  </section>
+</main>
+</body>
+</html>
